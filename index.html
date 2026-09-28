@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banano Calculator | Earn BAN by Folding</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- HEADER: Date, Time, Price -->
+    <header class="top-bar">
+        <div class="container top-bar__inner">
+            <div class="top-bar__left">
+                <span id="currentDate" class="top-bar__date"></span>
+                <span id="currentTime" class="top-bar__time"></span>
+            </div>
+            <div class="top-bar__right">
+                <i class="fa-solid fa-coins"></i>
+                <span>BAN Price: </span>
+                <strong id="banPrice">$--.------</strong>
+                <span id="banChange" class="top-bar__change"></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO: Title & Slogan -->
+    <section class="hero">
+        <div class="container hero__inner">
+            <div class="hero__logo">
+                <svg viewBox="0 0 48 48" width="110" height="110" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m32.5376,34.5767c-12.2662,1.5371-17.9275-9.2834-16.9079-10.3487.6696-.7001,1.6893-.7457,2.5872-.7609,4.109-.1217,9.9073,4.6873,11.0944,4.6569,2.2828-.0457,5.707-3.6829,7.9593-6.681.9436-1.2479,6.8332-3.135,6.1788.1522-2.1306,10.6835-9.329,12.7836-10.8965,12.9815h-.0152Z"/>
+                    <path d="m15.4776,13.4178c12.251-1.5066,17.9123,9.2986,16.8927,10.3639-.6696.7153-1.6893.7609-2.5872.7609-4.109.1217-9.9073-4.6873-11.0944-4.6569-2.2828.0457-5.707,3.6829-7.9593,6.681-.9436,1.2479-6.8332,3.1503-6.1788-.1522,2.1458-10.6987,9.3442-12.7988,10.927-12.9815v-.0152Z"/>
+                </svg>
+            </div>
+            <h1 class="hero__title">Banano Calculator</h1>
+            <p class="hero__slogan">Estimate your <strong>BAN</strong> earnings from Folding@home. <br>Fast, free, and potassium-rich.</p>
+        </div>
+    </section>
+
+    <!-- MAIN: Calculator + Chart -->
+    <main class="main">
+        <div class="container main__grid">
+
+            <!-- Calculator Card -->
+            <section class="card calculator">
+                <h2 class="card__title"><i class="fa-solid fa-calculator"></i> PPD → BAN Calculator</h2>
+
+                <div class="calculator__field">
+                    <label for="ppdInput">Points Per Day (PPD)</label>
+                    <input type="number" id="ppdInput" placeholder="e.g. 500000" min="0" step="1000">
+                </div>
+
+                <div class="calculator__field">
+                    <label for="rateInput">Conversion Rate (BAN per 1 PPD)</label>
+                    <input type="number" id="rateInput" value="0.001" min="0.000001" step="0.000001">
+                    <small class="calculator__hint">Default: 0.001 BAN/PPD. Adjust based on current payouts.</small>
+                </div>
+
+                <button id="calcBtn" class="btn btn--primary"><i class="fa-solid fa-rocket"></i> Calculate</button>
+                <button id="resetBtn" class="btn btn--ghost"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+
+                <div id="resultBox" class="calculator__result hidden">
+                    <h3>Your Estimated Earnings</h3>
+                    <div class="result__grid">
+                        <div class="result__item">
+                            <span class="result__label">Per Day</span>
+                            <span id="banPerDay" class="result__value">0 BAN</span>
+                            <span id="usdPerDay" class="result__usd">$0.00</span>
+                        </div>
+                        <div class="result__item">
+                            <span class="result__label">Per Week</span>
+                            <span id="banPerWeek" class="result__value">0 BAN</span>
+                            <span id="usdPerWeek" class="result__usd">$0.00</span>
+                        </div>
+                        <div class="result__item">
+                            <span class="result__label">Per Month</span>
+                            <span id="banPerMonth" class="result__value">0 BAN</span>
+                            <span id="usdPerMonth" class="result__usd">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chart Card -->
+            <section class="card chart-card">
+                <h2 class="card__title"><i class="fa-solid fa-chart-line"></i> BAN/USD – Last 7 Days</h2>
+                <div class="chart-container">
+                    <canvas id="priceChart"></canvas>
+                </div>
+                <button id="refreshChart" class="btn btn--ghost btn--small"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="section section--about">
+        <div class="container">
+            <div class="section__header">
+                <div class="section__icon-badge">
+                    <i class="fa-solid fa-circle-info"></i>
+                </div>
+                <h2 class="section__title">About</h2>
+                <p class="section__subtitle">Everything you need to know about Banano and this calculator</p>
+            </div>
+
+            <div class="about__grid">
+                <div class="about__card">
+                    <div class="about__card-icon about__card-icon--yellow">
+                        <i class="fa-solid fa-lemon"></i>
+                    </div>
+                    <h3>What is Banano?</h3>
+                    <p><strong>Banano (BAN)</strong> is a fee-less, instant, and potassium-rich cryptocurrency powered by DAG technology. It was forked from Nano in April 2018 and is distributed through folding, faucets, and community events.</p>
+                </div>
+
+                <div class="about__card">
+                    <div class="about__card-icon about__card-icon--green">
+                        <i class="fa-solid fa-microchip"></i>
+                    </div>
+                    <h3>How It Works</h3>
+                    <p>This calculator estimates your BAN earnings from <strong>Folding@home</strong> via BananoMiner. Simply enter your PPD (Points Per Day) and adjust the conversion rate if needed. The BAN price is fetched live from CoinGecko.</p>
+                </div>
+
+                <div class="about__card">
+                    <div class="about__card-icon about__card-icon--blue">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+                    <h3>Official Resources</h3>
+                    <p>Visit the official project site at <strong>banano.cc</strong> to learn more. Join the community and start earning BAN today by folding proteins for science.</p>
+                    <div class="about__links">
+                        <a href="https://bananominer.com/" target="_blank" rel="noopener" class="link-icon">
+                            <i class="fa-solid fa-microchip"></i> BananoMiner
+                        </a>
+                        <a href="https://www.reddit.com/r/banano/" target="_blank" rel="noopener" class="link-icon">
+                            <i class="fa-brands fa-reddit-alien"></i> r/banano
+                        </a>
+                        <a href="https://faucetpay.io/r/9178578" target="_blank" rel="noopener" class="link-icon link-icon--highlight">
+                            <i class="fa-solid fa-faucet"></i> FaucetPay
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="section section--contact">
+        <div class="container">
+            <div class="section__header">
+                <div class="section__icon-badge section__icon-badge--contact">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </div>
+                <h2 class="section__title">Get in Touch</h2>
+                <p class="section__subtitle">Have questions or suggestions? Join the community and reach out</p>
+            </div>
+
+            <div class="contact__grid">
+                <a href="https://www.reddit.com/r/banano/" target="_blank" rel="noopener" class="contact__card">
+                    <div class="contact__card-icon">
+                        <i class="fa-brands fa-reddit-alien"></i>
+                    </div>
+                    <h3>Reddit</h3>
+                    <p>Join the r/banano community for discussions, tips, and memes.</p>
+                    <span class="contact__card-cta">Visit <i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+
+                <a href="https://bananominer.com/" target="_blank" rel="noopener" class="contact__card">
+                    <div class="contact__card-icon contact__card-icon--green">
+                        <i class="fa-solid fa-microchip"></i>
+                    </div>
+                    <h3>BananoMiner</h3>
+                    <p>Start folding proteins and earn BAN rewards automatically.</p>
+                    <span class="contact__card-cta">Start <i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+
+                <a href="https://faucetpay.io/r/9178578" target="_blank" rel="noopener" class="contact__card contact__card--featured">
+                    <div class="contact__card-icon contact__card-icon--yellow">
+                        <i class="fa-solid fa-faucet"></i>
+                    </div>
+                    <h3>FaucetPay</h3>
+                    <p>Get free crypto from faucets and manage your micro-wallet.</p>
+                    <span class="contact__card-cta">Claim <i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER: Credit -->
+    <footer class="footer">
+        <div class="container footer__inner">
+            <div class="footer__credit">
+                <span class="footer__credit-label">Built with</span>
+                <div class="footer__icons">
+                    <span class="footer__icon footer__icon--html" title="HTML5">
+                        <i class="fa-brands fa-html5"></i>
+                        <span class="footer__icon-name">HTML</span>
+                    </span>
+                    <span class="footer__icon footer__icon--css" title="CSS3">
+                        <i class="fa-brands fa-css3-alt"></i>
+                        <span class="footer__icon-name">CSS</span>
+                    </span>
+                    <span class="footer__icon footer__icon--js" title="JavaScript">
+                        <i class="fa-brands fa-js"></i>
+                        <span class="footer__icon-name">JavaScript</span>
+                    </span>
+                    <span class="footer__icon footer__icon--chart" title="Chart.js">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span class="footer__icon-name">Chart.js</span>
+                    </span>
+                    <span class="footer__icon footer__icon--fa" title="Font Awesome">
+                        <i class="fa-brands fa-font-awesome"></i>
+                        <span class="footer__icon-name">Font Awesome</span>
+                    </span>
+                </div>
+            </div>
+            <p class="footer__small">
+                Price data provided by <strong>CoinGecko</strong>. Banano icon by Arcticons (CC BY-SA 4.0).
+            </p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
